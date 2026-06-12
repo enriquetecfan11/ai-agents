@@ -15,3 +15,9 @@ DOCUMENTS_DIR = Path(os.getenv("DOCUMENTS_DIR", "documentos"))
 JINA_API_KEY = os.getenv("JINA_API_KEY") or None
 OBSIDIAN_VAULT_PATH = os.getenv("OBSIDIAN_VAULT_PATH", "")
 URLS_FILE = ROOT_DIR / "config" / "urls.txt"
+
+# Agent Skills (agentskills.io): rutas de descubrimiento, en orden de precedencia
+SKILLS_SEARCH_PATHS: list[Path] = [
+    ROOT_DIR / ".agents" / "skills",
+    ROOT_DIR / "skills",
+]

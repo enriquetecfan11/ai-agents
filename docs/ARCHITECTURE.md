@@ -59,13 +59,17 @@ Usuario ──► chatbot_skills ──► classify (intent) ──► Skill ─
 
 ### Capa de Skills (`src/python_agents/skills/`)
 
+Formato [Agent Skills](https://agentskills.io/specification): cada skill es una carpeta con `SKILL.md` bajo `.agents/skills/`.
+
 | Módulo | Rol |
 |---|---|
-| `base.py` | Contrato `BaseSkill`, `SkillContext`, `SkillResult` |
-| `registry.py` | Registro y lookup de skills por intent |
-| `router.py` | Clasificación de intención (LLM + fallback keywords) |
+| `loader.py` | Descubrimiento y parseo de `SKILL.md` (YAML + Markdown) |
+| `markdown_skill.py` | Ejecutor que activa instrucciones y tools declaradas |
+| `executors.py` | Mapeo `allowed-tools` → tools Python |
+| `registry.py` | Registro automático desde skills descubiertas |
+| `router.py` | Clasificación por catálogo (tier 1) + LLM |
 | `tracing.py` | `TraceEvent` y reducer `append_trace` |
-| `implementations/` | `RagSkill`, `ExampleSkill`, `GeneralSkill` |
+| `base.py` | Contrato `BaseSkill`, `SkillContext`, `SkillResult` |
 
 ### Tools (`src/python_agents/tools/`)
 

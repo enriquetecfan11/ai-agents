@@ -38,11 +38,11 @@ def build_skills_graph(
         query = last_message.content
         intent, meta = classify_intent(query, llm, registry)
         return {
-            "intent": intent.value,
+            "intent": intent,
             "trace": [
                 trace_event(
                     "intent_classified",
-                    detail={"intent": intent.value, **meta},
+                    detail={"intent": intent, **meta},
                 )
             ],
         }

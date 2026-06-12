@@ -18,6 +18,11 @@ def _run_index(_: argparse.Namespace) -> None:
     main()
 
 
+def _run_simple(_: argparse.Namespace) -> None:
+    from scripts.chatbot_simple import chat
+    chat()
+
+
 def _run_rag(_: argparse.Namespace) -> None:
     from scripts.chatbot_rag import chat
     chat()
@@ -46,13 +51,14 @@ def _run_all(_: argparse.Namespace) -> None:
 
 
 def _run_tui(_: argparse.Namespace) -> None:
-    from tui import run_tui
+    from src.python_agents.tui import run_tui
     run_tui()
 
 
 COMMANDS = {
     "fetch": _run_fetch,
     "index": _run_index,
+    "simple": _run_simple,
     "rag": _run_rag,
     "memory": _run_memory,
     "monitor": _run_monitor,
@@ -73,6 +79,7 @@ def build_parser() -> argparse.ArgumentParser:
     fetch_parser.set_defaults(func=COMMANDS["fetch"])
 
     subparsers.add_parser("index", help="Indexar Markdown existente en documentos/").set_defaults(func=COMMANDS["index"])
+    subparsers.add_parser("simple", help="Chat simple con Ollama (sin RAG)").set_defaults(func=COMMANDS["simple"])
     subparsers.add_parser("rag", help="Chat RAG interactivo").set_defaults(func=COMMANDS["rag"])
     subparsers.add_parser("memory", help="Chat con memoria por hilos").set_defaults(func=COMMANDS["memory"])
     subparsers.add_parser("monitor", help="Inspeccionar colecciones ChromaDB").set_defaults(func=COMMANDS["monitor"])

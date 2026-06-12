@@ -126,19 +126,39 @@ class AgentState(TypedDict):
 2. Ejecuta `skill.run(query, context)` con tools propias.
 3. Devuelve respuesta AI, contexto RAG (si aplica) y eventos de trace.
 
-### Skills disponibles
+### Formato Agent Skills ([agentskills.io](https://agentskills.io/home))
 
-| Intent | Skill | Tools |
-|---|---|---|
-| `rag` | `RagSkill` | `chroma_search` |
-| `example` | `ExampleSkill` | `echo_tool`, `calc_tool` |
-| `general` | `GeneralSkill` | (ninguna) |
+Las skills viven en carpetas con un `SKILL.md` (YAML frontmatter + instrucciones Markdown):
+
+```
+.agents/skills/
+├── rag/SKILL.md
+├── example/SKILL.md
+└── general/SKILL.md
+```
+
+**Progressive disclosure:**
+
+1. **Discovery (tier 1):** al arrancar, solo `name` + `description` → catálogo para el router.
+2. **Activation (tier 2):** al ejecutar la skill, se carga el cuerpo de `SKILL.md`.
+3. **Resources (tier 3):** `scripts/`, `references/`, `assets/` bajo la carpeta de la skill.
+
+Rutas de búsqueda (en orden): `.agents/skills/`, `skills/` (configurable en `config.py`).
+
+### Skills incluidas
+
+| name | Tools (`allowed-tools`) |
+|---|---|
+| `rag` | `chroma_search` |
+| `example` | `echo_tool`, `calc_tool` |
+| `general` | (ninguna) |
 
 ### Trazabilidad
 
 Cada ejecución acumula `TraceEvent` en el estado:
 
 - `intent_classified` — intención detectada y confianza
+- `skill_activated` — ruta del `SKILL.md` cargado
 - `skill_start` / `skill_end` — inicio y fin de skill
 - `tool_call` / `tool_result` — invocación y resultado de tools
 
@@ -148,12 +168,12 @@ Comando CLI: `/trace` imprime los últimos eventos del hilo.
 
 `examples/skills_agent.py` — misma lógica sin `MemorySaver`, imprime intent y trace tras cada respuesta.
 
-### Registrar una skill nueva
+### Añadir una skill nueva
 
-1. Crear tools en `src/python_agents/tools/` implementando `BaseTool`.
-2. Subclase `BaseSkill` en `src/python_agents/skills/implementations/`.
-3. `registry.register(nueva_skill)` en `build_default_registry()`.
-4. El router descubre la skill vía `intent_label` y `description`.
+1. Crear `.agents/skills/<nombre>/SKILL.md` con frontmatter `name` y `description` (el `name` debe coincidir con el directorio).
+2. Escribir instrucciones en el cuerpo Markdown.
+3. Si necesita tools Python, declararlas en `allowed-tools` y registrar la tool en `src/python_agents/tools/`.
+4. Reiniciar el agente — `discover_skills()` la carga automáticamente.
 
 ### Extensión MCP (futuro)
 
