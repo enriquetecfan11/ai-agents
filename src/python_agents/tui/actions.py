@@ -56,7 +56,7 @@ PIPELINE_ACTIONS: tuple[ActionDef, ...] = (
     ActionDef(
         id="all",
         label="All",
-        description="Ejecuta fetch; abre RAG desde el menú Chat para continuar.",
+        description="Flujo fetch + chat RAG (mismo que python main.py all, sin bloquear la TUI).",
         category="pipeline",
         runner=_lazy_runner("_run_fetch"),
     ),

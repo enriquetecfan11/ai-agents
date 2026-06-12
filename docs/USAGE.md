@@ -1,5 +1,21 @@
 # Guía de uso
 
+## CLI (`main.py`)
+
+Comandos recomendados desde la raíz:
+
+```powershell
+python main.py fetch
+python main.py index
+python main.py monitor
+python main.py rag
+python main.py tui      # launcher visual Textual
+```
+
+Ver `python main.py --help` para la lista completa. Los scripts en `scripts/` siguen siendo válidos y son los que invoca `main.py` internamente.
+
+---
+
 ## Preparación inicial
 
 1. Clona el repositorio y entra en la carpeta.

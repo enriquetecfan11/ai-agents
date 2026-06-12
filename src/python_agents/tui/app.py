@@ -243,7 +243,9 @@ class LauncherTUI(App):
                 self._write_log("[OK] Completado sin salida.")
 
             if action.id == "all":
-                self._write_log("[INFO] Fetch listo. Abre RAG desde el menú Chat.")
+                self._write_log("[INFO] Fetch listo. Abriendo chat RAG…")
+                rag = next(a for a in ALL_ACTIONS if a.id == "rag")
+                self.call_from_thread(self._open_chat, rag)
 
         except Exception as exc:
             self._write_log(f"[ERROR] {exc}")

@@ -1,6 +1,8 @@
-# ai-agents
+# python-agents
 
-Scripts en Python para construir un asistente RAG local con **Ollama**, **ChromaDB** y **LangGraph**. Permite descargar documentación web, indexarla como vectores y consultarla en español con contexto recuperado.
+Asistente RAG local con **Ollama**, **ChromaDB** y **LangGraph**. Descarga documentación web, la indexa como vectores y permite consultarla en español con contexto recuperado.
+
+**Punto de entrada:** `main.py` (CLI). Atajo visual: `tui.py` o `python main.py tui`.
 
 ## Para qué sirve
 
@@ -20,30 +22,27 @@ Evita copiar y pegar manualmente información de CVEs, advisories o notas técni
 - Indexación en ChromaDB con embeddings de Ollama.
 - Chatbot RAG con grafo LangGraph (nodos `retrieve` + `generate`).
 - Chat con memoria de conversación por hilos (`thread_id`).
+- Agente con **Agent Skills** (`.agents/skills/*/SKILL.md`).
+- CLI unificada (`main.py`) y launcher TUI con **Textual** (`tui.py`).
 - Utilidad para inspeccionar colecciones Chroma.
 - Script experimental para vaults de Obsidian.
 
 ## Estructura del proyecto
 
 ```
-ai-agents/
-├── README.md
-├── .env.example
+python-agents/
+├── main.py                   # CLI principal (entrypoint)
+├── tui.py                    # Atajo → python main.py tui
+├── script.ps1                # Setup + atajos PowerShell
 ├── requirements.txt
-├── config/
-│   └── urls.example.txt      # Plantilla de URLs
-├── scripts/
-│   ├── fetch_and_index.py    # Descarga + indexación
-│   ├── index_documents.py    # Solo indexación
-│   ├── chatbot_rag.py        # Chat RAG
-│   ├── chatbot_memory.py     # Chat con memoria
-│   ├── monitor_chroma.py     # Inspección de Chroma
-│   └── obsidian_rag.py       # Experimental (Obsidian)
-├── examples/
-│   └── simple_chat.py        # Ejemplo mínimo sin memoria
-├── src/python_agents/        # Configuración y lógica compartida
-├── docs/                     # Documentación adicional
-├── data/                     # Datos runtime (gitignored)
+├── .env.example
+├── config/urls.example.txt
+├── .agents/skills/           # Agent Skills (SKILL.md)
+├── scripts/                  # Scripts invocables (también vía main.py)
+├── examples/                 # Ejemplos mínimos
+├── src/python_agents/        # Config, ingest, skills, TUI
+├── docs/                     # Arquitectura y guías
+├── data/                     # Runtime (gitignored)
 └── documentos/               # Markdown descargado (gitignored)
 ```
 
@@ -85,41 +84,44 @@ copy config\urls.example.txt config\urls.txt
 | `JINA_API_KEY` | Token opcional de Jina Reader | vacío |
 | `OBSIDIAN_VAULT_PATH` | Ruta al vault Obsidian (experimental) | vacío |
 
-## Cómo ejecutar los scripts principales
+## CLI (`main.py`)
 
 Desde la raíz del proyecto:
 
 ```powershell
-# 1. Descargar URLs e indexar en Chroma
+python main.py fetch              # Descargar URLs e indexar
+python main.py fetch URL ...      # URLs opcionales por argumento
+python main.py index              # Indexar documentos/ existentes
+python main.py monitor            # Inspeccionar ChromaDB
+python main.py all                # fetch + chat RAG (CLI)
+python main.py simple             # Chat Ollama sin RAG
+python main.py rag                # Chat RAG
+python main.py memory             # Chat con memoria por hilos
+python main.py skills             # Agente con skills y trace
+python main.py tui                # Launcher visual (Textual)
+```
+
+### TUI (`tui.py`)
+
+Equivalente a `python main.py tui`. Menú lateral con:
+
+- **Pipeline:** fetch, index, monitor, all (fetch + abre RAG en pantalla)
+- **Chat:** simple, rag, memory, skills
+
+```powershell
+python tui.py
+```
+
+### Scripts directos (compatibles)
+
+Los scripts en `scripts/` siguen funcionando de forma independiente:
+
+```powershell
 python scripts/fetch_and_index.py
-
-# 2. Indexar solo los .md existentes en documentos/
-python scripts/index_documents.py
-
-# 3. Chat RAG sobre la colección indexada
 python scripts/chatbot_rag.py
-
-# 4. Inspeccionar colecciones Chroma
-python scripts/monitor_chroma.py
-```
-
-Otros scripts:
-
-```powershell
-# Chat con memoria por hilos
 python scripts/chatbot_memory.py
-
-# Ejemplo mínimo (sin memoria persistente)
-python examples/simple_chat.py
-
-# RAG sobre Obsidian (experimental, requiere OBSIDIAN_VAULT_PATH)
-python scripts/obsidian_rag.py
-```
-
-También puedes pasar URLs directamente:
-
-```powershell
-python scripts/fetch_and_index.py https://ejemplo.com/pagina
+python scripts/monitor_chroma.py
+python examples/simple_chat.py      # ejemplo; preferir main.py simple
 ```
 
 ## Ejemplos de uso
@@ -128,13 +130,11 @@ python scripts/fetch_and_index.py https://ejemplo.com/pagina
 
 ```powershell
 copy .env.example .env
-# Editar OLLAMA_BASE_URL en .env
-
 copy config\urls.example.txt config\urls.txt
-# Añadir URLs en config/urls.txt
 
-python scripts/fetch_and_index.py
-python scripts/chatbot_rag.py
+python main.py fetch
+python main.py rag
+# o: python main.py tui
 ```
 
 En el chat RAG:
@@ -183,7 +183,6 @@ flowchart LR
 - Añadir una licencia (MIT sugerida).
 - Crear tests básicos de smoke para ingest y configuración.
 - Unificar las dos rutas de Chroma (`chroma_db/` y `data/chroma/`).
-- Añadir CLI con `argparse` o `typer` para los scripts.
 - Soporte para reindexación incremental (evitar duplicados).
 
 ## Documentación adicional

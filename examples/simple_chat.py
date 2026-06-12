@@ -1,5 +1,7 @@
 """
 Ejemplo mínimo: chatbot con LangGraph y Ollama sin memoria persistente.
+
+Preferir: python main.py simple  (o scripts/chatbot_simple.py)
 """
 
 from typing import Annotated
