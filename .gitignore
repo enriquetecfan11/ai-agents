@@ -1,0 +1,61 @@
+# Entorno y secretos
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+
+# Entornos virtuales Python
+env/
+.venv/
+venv/
+ENV/
+
+# Bytecode y caché
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Datos runtime (bases vectoriales y documentos descargados)
+chroma_db/
+data/chroma/
+documentos/*
+!documentos/.gitkeep
+
+# Config local de URLs
+config/urls.txt
+
+# IDEs y editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs y temporales
+*.log
+logs/
+tmp/
+temp/
+.cache/
+
+# SQLite y bases locales
+*.sqlite3
+*.db
+
+# Modelos y datasets grandes
+models/
+*.bin
+*.gguf
+datasets/
+
+# Outputs generados
+outputs/
+output/
+
+# SO
+.DS_Store
+Thumbs.db
+desktop.ini
