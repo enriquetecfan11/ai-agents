@@ -10,3 +10,4 @@ langgraph==1.2.4
 langgraph-checkpoint==4.1.1
 requests==2.34.2
 typing_extensions==4.15.0
+textual>=1.0.0

@@ -40,6 +40,7 @@ Lógica compartida de indexación:
 | `index_documents.py` | Solo indexación de `documentos/` |
 | `chatbot_rag.py` | Grafo LangGraph con retrieve + generate |
 | `chatbot_memory.py` | Chat simple con memoria por hilos |
+| `chatbot_skills.py` | Agente con skills, routing por intención y trace |
 | `monitor_chroma.py` | Inspección de colecciones |
 | `obsidian_rag.py` | RAG sobre vault Obsidian (experimental) |
 
@@ -50,7 +51,32 @@ URLs ──► Jina Reader ──► documentos/*.md ──► Text Splitter ─
                                                                     │
                                                                     ▼
 Usuario ──► chatbot_rag ──► Retriever (MMR) ──► Contexto ──► Ollama LLM ──► Respuesta
+
+Usuario ──► chatbot_skills ──► classify (intent) ──► Skill ──► Tools ──► Ollama LLM ──► Respuesta
+                                      │
+                                      └── trace events
 ```
+
+### Capa de Skills (`src/python_agents/skills/`)
+
+| Módulo | Rol |
+|---|---|
+| `base.py` | Contrato `BaseSkill`, `SkillContext`, `SkillResult` |
+| `registry.py` | Registro y lookup de skills por intent |
+| `router.py` | Clasificación de intención (LLM + fallback keywords) |
+| `tracing.py` | `TraceEvent` y reducer `append_trace` |
+| `implementations/` | `RagSkill`, `ExampleSkill`, `GeneralSkill` |
+
+### Tools (`src/python_agents/tools/`)
+
+| Tool | Rol |
+|---|---|
+| `chroma_search` | Búsqueda MMR sobre ChromaDB (compartida con RAG) |
+| `echo_tool` / `calc_tool` | Demostración para `ExampleSkill` |
+
+### Grafo de skills (`src/python_agents/agents/skills_graph.py`)
+
+Compila el grafo `classify → execute_skill` con `SkillRegistry` inyectable. Preparado para ampliar con adapters MCP en la capa de tools.
 
 ## Colecciones ChromaDB
 
@@ -76,6 +102,9 @@ scripts/*.py
     └── src/python_agents/config.py     (env vars)
     └── src/python_agents/ingest.py     (indexación)
     └── src/python_agents/jina_fetcher.py (descarga web)
+    └── src/python_agents/agents/       (grafos LangGraph)
+    └── src/python_agents/skills/       (skills y routing)
+    └── src/python_agents/tools/        (tools desacopladas)
 ```
 
 ## Datos excluidos del repositorio

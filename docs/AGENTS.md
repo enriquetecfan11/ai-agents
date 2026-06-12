@@ -92,6 +92,75 @@ El historial se mantiene manualmente en una lista Python dentro del bucle `while
 
 ---
 
+## Agente con Skills (`chatbot_skills.py`)
+
+Arquitectura modular con routing automático por intención, tools desacopladas y trazabilidad.
+
+### Grafo
+
+```
+START ──► classify ──► execute_skill ──► END
+```
+
+### Estado
+
+```python
+class AgentState(TypedDict):
+    messages: Annotated[list, add_messages]
+    intent: str
+    trace: Annotated[list[TraceEvent], append_trace]
+    context: str
+    last_skill: str
+```
+
+### Nodo `classify`
+
+1. Toma la última pregunta del usuario.
+2. Clasifica la intención con Ollama (`with_structured_output`).
+3. Fallback por keywords si el parse falla.
+4. Registra evento `intent_classified` en `trace`.
+
+### Nodo `execute_skill`
+
+1. Busca la skill en `SkillRegistry` por `intent`.
+2. Ejecuta `skill.run(query, context)` con tools propias.
+3. Devuelve respuesta AI, contexto RAG (si aplica) y eventos de trace.
+
+### Skills disponibles
+
+| Intent | Skill | Tools |
+|---|---|---|
+| `rag` | `RagSkill` | `chroma_search` |
+| `example` | `ExampleSkill` | `echo_tool`, `calc_tool` |
+| `general` | `GeneralSkill` | (ninguna) |
+
+### Trazabilidad
+
+Cada ejecución acumula `TraceEvent` en el estado:
+
+- `intent_classified` — intención detectada y confianza
+- `skill_start` / `skill_end` — inicio y fin de skill
+- `tool_call` / `tool_result` — invocación y resultado de tools
+
+Comando CLI: `/trace` imprime los últimos eventos del hilo.
+
+### Ejemplo mínimo
+
+`examples/skills_agent.py` — misma lógica sin `MemorySaver`, imprime intent y trace tras cada respuesta.
+
+### Registrar una skill nueva
+
+1. Crear tools en `src/python_agents/tools/` implementando `BaseTool`.
+2. Subclase `BaseSkill` en `src/python_agents/skills/implementations/`.
+3. `registry.register(nueva_skill)` en `build_default_registry()`.
+4. El router descubre la skill vía `intent_label` y `description`.
+
+### Extensión MCP (futuro)
+
+Las tools usan el contrato `invoke(**kwargs) -> ToolResult`. Un `McpToolAdapter` puede envolver tools MCP sin modificar skills ni el grafo.
+
+---
+
 ## Configuración de modelos
 
 Todos los agentes leen de `src/python_agents/config.py`:
