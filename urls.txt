@@ -1,4 +1,4 @@
 # Copia este archivo a urls.txt y añade las URLs a descargar.
 # Una URL por línea. Las líneas que empiezan por # se ignoran.
 
-# https://cti.wazuh.com/vulnerabilities/cves/CVE-2026-34182
+https://cti.wazuh.com/vulnerabilities/cves/CVE-2026-34182

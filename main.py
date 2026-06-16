@@ -8,8 +8,7 @@ setup_import_path()
 
 def _run_fetch(args: argparse.Namespace) -> None:
     from agents.fetch_and_index import main
-    if args.urls:
-        sys.argv = ["fetch_and_index.py", *args.urls]
+    sys.argv = ["fetch_and_index.py", *args.urls]
     main()
 
 
@@ -72,7 +71,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Asistente RAG local con Ollama, ChromaDB y LangGraph.",
     )
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers = parser.add_subparsers(dest="command", required=False)
 
     fetch_parser = subparsers.add_parser("fetch", help="Descargar URLs e indexar en Chroma")
     fetch_parser.add_argument("urls", nargs="*", help="URLs opcionales (si no, usa urls.txt)")
@@ -93,6 +92,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
+    
+    if args.command is None:
+        parser.print_help()
+        return
+    
     args.func(args)
 
 

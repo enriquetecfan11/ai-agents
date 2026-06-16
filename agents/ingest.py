@@ -56,6 +56,7 @@ def ingest_markdown_to_chroma(
     documents_dir: Path | None = None,
     chroma_dir: str | None = None,
     collection_name: str | None = None,
+    skip_duplicates: bool = True,
 ) -> tuple[int, int]:
     """Indexa archivos Markdown en ChromaDB. Devuelve (documentos, chunks)."""
     docs_path = documents_dir or DOCUMENTS_DIR
@@ -82,10 +83,32 @@ def ingest_markdown_to_chroma(
         persist_directory=persist_dir,
         embedding_function=get_embeddings(),
     )
-    vectorstore.add_documents(chunks)
+
+    if skip_duplicates:
+        existing_sources = set()
+        try:
+            existing_data = vectorstore.get()
+            if existing_data and "metadatas" in existing_data:
+                for metadata in existing_data["metadatas"]:
+                    if metadata and "source" in metadata:
+                        existing_sources.add(metadata["source"])
+        except Exception:
+            pass
+
+        chunks_to_add = [
+            chunk for chunk in chunks
+            if chunk.metadata.get("source") not in existing_sources
+        ]
+        skipped = len(chunks) - len(chunks_to_add)
+        if skipped > 0:
+            print(f"[INFO] Omitidos {skipped} chunks duplicados (de {len(chunks)})")
+            chunks = chunks_to_add
+
+    if chunks:
+        vectorstore.add_documents(chunks)
 
     print(f"[OK] Documentos cargados: {len(documents)}")
-    print(f"[OK] Chunks generados: {len(chunks)}")
+    print(f"[OK] Chunks indexados: {len(chunks)}")
     print(f"[OK] Colección: {collection}")
     print(f"[OK] Persistido en: {persist_dir}")
     return len(documents), len(chunks)
