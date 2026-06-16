@@ -37,11 +37,11 @@ function Ensure-Setup {
         Write-Host ".env ya existe."
     }
 
-    if (-not (Test-Path (Join-Path $Root "config\urls.txt"))) {
-        Copy-Item (Join-Path $Root "config\urls.example.txt") (Join-Path $Root "config\urls.txt")
-        Write-Host "Creado config\urls.txt desde plantilla."
+    if (-not (Test-Path (Join-Path $Root "urls.txt"))) {
+        Copy-Item (Join-Path $Root "urls.example.txt") (Join-Path $Root "urls.txt")
+        Write-Host "Creado urls.txt desde plantilla."
     } else {
-        Write-Host "config\urls.txt ya existe."
+        Write-Host "urls.txt ya existe."
     }
 
     Write-Step "Creando entorno virtual"
@@ -70,7 +70,7 @@ switch ($Action) {
 
 Próximos pasos:
   1. Edita .env (OLLAMA_BASE_URL y modelos)
-  2. Edita config\urls.txt con tus URLs
+  2. Edita urls.txt con tus URLs
   3. Ejecuta: python main.py fetch   (o .\script.ps1 -Action fetch)
   4. Ejecuta: python main.py tui     (launcher visual)
 

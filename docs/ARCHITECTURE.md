@@ -2,11 +2,11 @@
 
 ## Visión general
 
-`ai-agents` es una colección de scripts que implementan un pipeline RAG (Retrieval-Augmented Generation) local. No es una aplicación web ni un paquete instalable: cada script es un punto de entrada independiente que comparte configuración y utilidades en `src/python_agents/`.
+`ai-agents` es una colección de scripts que implementan un pipeline RAG (Retrieval-Augmented Generation) local. No es una aplicación web ni un paquete instalable: cada script es un punto de entrada independiente que comparte configuración y utilidades en `agents/`.
 
 ## Componentes
 
-### `src/python_agents/config.py`
+### `agents/config.py`
 
 Carga variables de entorno desde `.env` y expone constantes usadas por todos los scripts:
 
@@ -15,7 +15,7 @@ Carga variables de entorno desde `.env` y expone constantes usadas por todos los
 - Token opcional de Jina Reader.
 - Ruta del vault Obsidian (experimental).
 
-### `src/python_agents/jina_fetcher.py`
+### `agents/jina_fetcher.py`
 
 Responsable de la ingesta de contenido web:
 
@@ -23,7 +23,7 @@ Responsable de la ingesta de contenido web:
 - Guarda Markdown en `documentos/` con metadatos YAML front matter.
 - Soporta reintentos HTTP y nombres de archivo derivados de la URL.
 
-### `src/python_agents/ingest.py`
+### `agents/ingest.py`
 
 Lógica compartida de indexación:
 
@@ -32,17 +32,17 @@ Lógica compartida de indexación:
 3. Divide en chunks con `RecursiveCharacterTextSplitter`.
 4. Genera embeddings con Ollama y persiste en ChromaDB.
 
-### Scripts de ejecución (`scripts/`)
+### Módulos de ejecución (`agents/`)
 
-| Script | Rol |
+| Módulo | Rol |
 |---|---|
-| `fetch_and_index.py` | Orquesta descarga Jina + indexación Chroma |
-| `index_documents.py` | Solo indexación de `documentos/` |
-| `chatbot_rag.py` | Grafo LangGraph con retrieve + generate |
-| `chatbot_memory.py` | Chat simple con memoria por hilos |
-| `chatbot_skills.py` | Agente con skills, routing por intención y trace |
-| `monitor_chroma.py` | Inspección de colecciones |
-| `obsidian_rag.py` | RAG sobre vault Obsidian (experimental) |
+| `agents/fetch_and_index.py` | Orquesta descarga Jina + indexación Chroma |
+| `agents/index_documents.py` | Solo indexación de `documentos/` |
+| `agents/chatbot_rag.py` | Grafo LangGraph con retrieve + generate |
+| `agents/chatbot_memory.py` | Chat simple con memoria por hilos |
+| `agents/chatbot_skills.py` | Agente con skills, routing por intención y trace |
+| `agents/monitor_chroma.py` | Inspección de colecciones |
+| `agents/obsidian_rag.py` | RAG sobre vault Obsidian (experimental) |
 
 ## Flujo de datos
 
@@ -57,9 +57,9 @@ Usuario ──► chatbot_skills ──► classify (intent) ──► Skill ─
                                       └── trace events
 ```
 
-### Capa de Skills (`src/python_agents/skills/`)
+### Capa de Skills (`agents/skills/`)
 
-Formato [Agent Skills](https://agentskills.io/specification): cada skill es una carpeta con `SKILL.md` bajo `.agents/skills/`.
+Formato [Agent Skills](https://agentskills.io/specification): cada skill es una carpeta con `SKILL.md` bajo `skills/`.
 
 | Módulo | Rol |
 |---|---|
@@ -71,14 +71,14 @@ Formato [Agent Skills](https://agentskills.io/specification): cada skill es una 
 | `tracing.py` | `TraceEvent` y reducer `append_trace` |
 | `base.py` | Contrato `BaseSkill`, `SkillContext`, `SkillResult` |
 
-### Tools (`src/python_agents/tools/`)
+### Tools (`tools/`)
 
 | Tool | Rol |
 |---|---|
 | `chroma_search` | Búsqueda MMR sobre ChromaDB (compartida con RAG) |
 | `echo_tool` / `calc_tool` | Demostración para `ExampleSkill` |
 
-### Grafo de skills (`src/python_agents/agents/skills_graph.py`)
+### Grafo de skills (`agents/skills_graph.py`)
 
 Compila el grafo `classify → execute_skill` con `SkillRegistry` inyectable. Preparado para ampliar con adapters MCP en la capa de tools.
 
@@ -101,14 +101,14 @@ Compila el grafo `classify → execute_skill` con `SkillRegistry` inyectable. Pr
 ## Dependencias entre módulos
 
 ```
-scripts/*.py
-    └── src/python_agents/paths.py      (sys.path setup)
-    └── src/python_agents/config.py     (env vars)
-    └── src/python_agents/ingest.py     (indexación)
-    └── src/python_agents/jina_fetcher.py (descarga web)
-    └── src/python_agents/agents/       (grafos LangGraph)
-    └── src/python_agents/skills/       (skills y routing)
-    └── src/python_agents/tools/        (tools desacopladas)
+agents/*.py
+    └── agents/paths.py      (sys.path setup)
+    └── agents/config.py     (env vars)
+    └── agents/ingest.py     (indexación)
+    └── agents/jina_fetcher.py (descarga web)
+    └── agents/skills_graph.py       (grafos LangGraph)
+    └── agents/skills/       (skills y routing)
+    └── tools/        (tools desacopladas)
 ```
 
 ## Datos excluidos del repositorio

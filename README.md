@@ -22,7 +22,7 @@ Evita copiar y pegar manualmente información de CVEs, advisories o notas técni
 - Indexación en ChromaDB con embeddings de Ollama.
 - Chatbot RAG con grafo LangGraph (nodos `retrieve` + `generate`).
 - Chat con memoria de conversación por hilos (`thread_id`).
-- Agente con **Agent Skills** (`.agents/skills/*/SKILL.md`).
+- Agente con **Agent Skills** (`skills/*/SKILL.md`).
 - CLI unificada (`main.py`) y launcher TUI con **Textual** (`tui.py`).
 - Utilidad para inspeccionar colecciones Chroma.
 - Script experimental para vaults de Obsidian.
@@ -36,11 +36,10 @@ python-agents/
 ├── script.ps1                # Setup + atajos PowerShell
 ├── requirements.txt
 ├── .env.example
-├── config/urls.example.txt
-├── .agents/skills/           # Agent Skills (SKILL.md)
-├── scripts/                  # Scripts invocables (también vía main.py)
+├── urls.example.txt
+├── skills/                 # Agent Skills (SKILL.md)
+├── agents/                 # Scripts, configuración, ingest, skills, TUI
 ├── examples/                 # Ejemplos mínimos
-├── src/python_agents/        # Config, ingest, skills, TUI
 ├── docs/                     # Arquitectura y guías
 ├── data/                     # Runtime (gitignored)
 └── documentos/               # Markdown descargado (gitignored)
@@ -68,7 +67,7 @@ Edita `.env` con tu configuración real (especialmente `OLLAMA_BASE_URL`).
 Para las URLs, copia la plantilla:
 
 ```powershell
-copy config\urls.example.txt config\urls.txt
+copy urls.example.txt urls.txt
 ```
 
 ## Configuración de variables de entorno
@@ -114,13 +113,13 @@ python tui.py
 
 ### Scripts directos (compatibles)
 
-Los scripts en `scripts/` siguen funcionando de forma independiente:
+Los guiones en `agents/` siguen siendo ejecutables de forma independiente:
 
 ```powershell
-python scripts/fetch_and_index.py
-python scripts/chatbot_rag.py
-python scripts/chatbot_memory.py
-python scripts/monitor_chroma.py
+python agents/fetch_and_index.py
+python agents/chatbot_rag.py
+python agents/chatbot_memory.py
+python agents/monitor_chroma.py
 python examples/simple_chat.py      # ejemplo; preferir main.py simple
 ```
 
@@ -130,7 +129,7 @@ python examples/simple_chat.py      # ejemplo; preferir main.py simple
 
 ```powershell
 copy .env.example .env
-copy config\urls.example.txt config\urls.txt
+copy urls.example.txt urls.txt
 
 python main.py fetch
 python main.py rag
@@ -147,7 +146,7 @@ En el chat RAG:
 
 ```mermaid
 flowchart LR
-    urls[config/urls.txt] --> fetch[fetch_and_index]
+    urls[urls.txt] --> fetch[fetch_and_index]
     fetch --> jina[Jina Reader]
     jina --> docs[documentos/*.md]
     docs --> ingest[indexador Chroma]
@@ -194,8 +193,8 @@ flowchart LR
 ## Avisos importantes
 
 - **No subas `.env`** ni bases vectoriales al repositorio.
-- Los modelos y la URL de Ollama deben existir en tu entorno antes de ejecutar los scripts.
-- `scripts/obsidian_rag.py` es experimental y requiere configurar `OBSIDIAN_VAULT_PATH`.
+- Los modelos y la URL de Ollama deben existir en tu entorno antes de ejecutar los módulos.
+- `agents/obsidian_rag.py` es experimental y requiere configurar `OBSIDIAN_VAULT_PATH`.
 - Sin `JINA_API_KEY`, Jina Reader funciona con límites de uso; consulta su documentación.
 
 ## Licencia

@@ -131,7 +131,7 @@ class AgentState(TypedDict):
 Las skills viven en carpetas con un `SKILL.md` (YAML frontmatter + instrucciones Markdown):
 
 ```
-.agents/skills/
+skills/
 ├── rag/SKILL.md
 ├── example/SKILL.md
 └── general/SKILL.md
@@ -143,7 +143,7 @@ Las skills viven en carpetas con un `SKILL.md` (YAML frontmatter + instrucciones
 2. **Activation (tier 2):** al ejecutar la skill, se carga el cuerpo de `SKILL.md`.
 3. **Resources (tier 3):** `scripts/`, `references/`, `assets/` bajo la carpeta de la skill.
 
-Rutas de búsqueda (en orden): `.agents/skills/`, `skills/` (configurable en `config.py`).
+Rutas de búsqueda (en orden): `skills/` (configurable en `config.py`).
 
 ### Skills incluidas
 
@@ -170,9 +170,9 @@ Comando CLI: `/trace` imprime los últimos eventos del hilo.
 
 ### Añadir una skill nueva
 
-1. Crear `.agents/skills/<nombre>/SKILL.md` con frontmatter `name` y `description` (el `name` debe coincidir con el directorio).
+1. Crear `skills/<nombre>/SKILL.md` con frontmatter `name` y `description` (el `name` debe coincidir con el directorio).
 2. Escribir instrucciones en el cuerpo Markdown.
-3. Si necesita tools Python, declararlas en `allowed-tools` y registrar la tool en `src/python_agents/tools/`.
+3. Si necesita tools Python, declararlas en `allowed-tools` y registrar la tool en `tools/`.
 4. Reiniciar el agente — `discover_skills()` la carga automáticamente.
 
 ### Extensión MCP (futuro)
@@ -183,7 +183,7 @@ Las tools usan el contrato `invoke(**kwargs) -> ToolResult`. Un `McpToolAdapter`
 
 ## Configuración de modelos
 
-Todos los agentes leen de `src/python_agents/config.py`:
+Todos los agentes leen de `agents/config.py`:
 
 | Parámetro | Uso |
 |---|---|

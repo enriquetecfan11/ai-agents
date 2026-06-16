@@ -2,7 +2,7 @@
 
 import sys
 
-from src.python_agents.paths import setup_import_path
+from agents.paths import setup_import_path
 
 setup_import_path()
 

@@ -1,57 +1,57 @@
 import argparse
 import sys
 
-from src.python_agents.paths import setup_import_path
+from agents.paths import setup_import_path
 
 setup_import_path()
 
 
 def _run_fetch(args: argparse.Namespace) -> None:
-    from scripts.fetch_and_index import main
+    from agents.fetch_and_index import main
     if args.urls:
         sys.argv = ["fetch_and_index.py", *args.urls]
     main()
 
 
 def _run_index(_: argparse.Namespace) -> None:
-    from scripts.index_documents import main
+    from agents.index_documents import main
     main()
 
 
 def _run_simple(_: argparse.Namespace) -> None:
-    from scripts.chatbot_simple import chat
+    from agents.chatbot_simple import chat
     chat()
 
 
 def _run_rag(_: argparse.Namespace) -> None:
-    from scripts.chatbot_rag import chat
+    from agents.chatbot_rag import chat
     chat()
 
 
 def _run_memory(_: argparse.Namespace) -> None:
-    from scripts.chatbot_memory import chat
+    from agents.chatbot_memory import chat
     chat()
 
 
 def _run_monitor(_: argparse.Namespace) -> None:
-    from scripts.monitor_chroma import main
+    from agents.monitor_chroma import main
     main()
 
 
 def _run_skills(_: argparse.Namespace) -> None:
-    from scripts.chatbot_skills import chat
+    from agents.chatbot_skills import chat
     chat()
 
 
 def _run_all(_: argparse.Namespace) -> None:
-    from scripts.fetch_and_index import main as fetch_main
-    from scripts.chatbot_rag import chat
+    from agents.fetch_and_index import main as fetch_main
+    from agents.chatbot_rag import chat
     fetch_main()
     chat()
 
 
 def _run_tui(_: argparse.Namespace) -> None:
-    from src.python_agents.tui import run_tui
+    from agents.tui import run_tui
     run_tui()
 
 
@@ -75,7 +75,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     fetch_parser = subparsers.add_parser("fetch", help="Descargar URLs e indexar en Chroma")
-    fetch_parser.add_argument("urls", nargs="*", help="URLs opcionales (si no, usa config/urls.txt)")
+    fetch_parser.add_argument("urls", nargs="*", help="URLs opcionales (si no, usa urls.txt)")
     fetch_parser.set_defaults(func=COMMANDS["fetch"])
 
     subparsers.add_parser("index", help="Indexar Markdown existente en documentos/").set_defaults(func=COMMANDS["index"])

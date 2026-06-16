@@ -12,7 +12,7 @@ python main.py rag
 python main.py tui      # launcher visual Textual
 ```
 
-Ver `python main.py --help` para la lista completa. Los scripts en `scripts/` siguen siendo válidos y son los que invoca `main.py` internamente.
+Ver `python main.py --help` para la lista completa. Los scripts en `agents/` siguen siendo válidos y son los que invoca `main.py` internamente.
 
 ---
 
@@ -40,15 +40,15 @@ ollama pull mxbai-embed-large
 ### Con archivo de URLs
 
 ```powershell
-copy config\urls.example.txt config\urls.txt
-# Edita config/urls.txt con tus URLs (una por línea)
-python scripts/fetch_and_index.py
+copy urls.example.txt urls.txt
+# Edita urls.txt con tus URLs (una por línea)
+python agents/fetch_and_index.py
 ```
 
 ### Con URLs por línea de comandos
 
 ```powershell
-python scripts/fetch_and_index.py https://ejemplo.com/cve-2026-0001
+python agents/fetch_and_index.py https://ejemplo.com/cve-2026-0001
 ```
 
 ### Salida esperada
@@ -66,7 +66,7 @@ python scripts/fetch_and_index.py https://ejemplo.com/cve-2026-0001
 Útil cuando ya tienes archivos en `documentos/` y solo quieres actualizar ChromaDB.
 
 ```powershell
-python scripts/index_documents.py
+python agents/index_documents.py
 ```
 
 ---
@@ -76,7 +76,7 @@ python scripts/index_documents.py
 **Propósito:** chat interactivo con recuperación de contexto desde ChromaDB.
 
 ```powershell
-python scripts/chatbot_rag.py
+python agents/chatbot_rag.py
 ```
 
 ### Comandos disponibles
@@ -99,7 +99,7 @@ python scripts/chatbot_rag.py
 **Propósito:** chat con Ollama y memoria por hilos, sin RAG.
 
 ```powershell
-python scripts/chatbot_memory.py
+python agents/chatbot_memory.py
 ```
 
 | Comando | Acción |
@@ -115,7 +115,7 @@ python scripts/chatbot_memory.py
 **Propósito:** inspeccionar colecciones y ver una muestra de registros.
 
 ```powershell
-python scripts/monitor_chroma.py
+python agents/monitor_chroma.py
 ```
 
 Muestra nombre de colección, número de registros y preview de los primeros 3 documentos.
@@ -130,7 +130,7 @@ Muestra nombre de colección, número de registros y preview de los primeros 3 d
 2. Ejecuta:
 
 ```powershell
-python scripts/obsidian_rag.py
+python agents/obsidian_rag.py
 ```
 
 3. Elige modo:
@@ -159,9 +159,9 @@ python examples/simple_chat.py
 
 ### ChromaDB vacío
 
-- Ejecuta `python scripts/monitor_chroma.py` para verificar colecciones.
+- Ejecuta `python agents/monitor_chroma.py` para verificar colecciones.
 - Asegúrate de que `documentos/` contiene archivos `.md`.
-- Vuelve a indexar con `python scripts/index_documents.py`.
+- Vuelve a indexar con `python agents/index_documents.py`.
 
 ### Error al descargar URLs
 
@@ -169,11 +169,11 @@ python examples/simple_chat.py
 - Si Jina limita peticiones, configura `JINA_API_KEY` en `.env`.
 - Revisa que las URLs sean accesibles públicamente.
 
-### `ModuleNotFoundError: src.python_agents`
+### `ModuleNotFoundError: agents`
 
-Ejecuta los scripts desde la raíz del proyecto, no desde dentro de `scripts/`:
+Ejecuta los módulos desde la raíz del proyecto, no desde dentro de `agents/`:
 
 ```powershell
 cd C:\ruta\a\python-agents
-python scripts/chatbot_rag.py
+python agents/chatbot_rag.py
 ```
