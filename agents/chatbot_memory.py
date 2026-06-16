@@ -15,6 +15,7 @@ from langgraph.graph import END, START, StateGraph  # noqa: E402
 from langgraph.graph.message import add_messages  # noqa: E402
 
 from agents.config import OLLAMA_BASE_URL, OLLAMA_CHAT_MODEL  # noqa: E402
+from agents.llm_feedback import print_response_feedback  # noqa: E402
 
 
 class State(TypedDict):
@@ -75,8 +76,11 @@ def chat() -> None:
             print(f"Cambiado a thread_id={thread_id}\n")
             continue
 
+        print("Enviando mensaje...", flush=True)
+        print("Recibiendo respuesta...", flush=True)
         print("Bot: ", end="", flush=True)
 
+        final_response = None
         for chunk, _metadata in graph.stream(
             {"messages": [HumanMessage(content=user_input)]},
             config=config,
@@ -86,8 +90,12 @@ def chat() -> None:
                 text = chunk.content
                 if isinstance(text, str):
                     print(text, end="", flush=True)
+                    final_response = chunk
 
         print("\n")
+        if final_response is not None:
+            print_response_feedback(final_response)
+            print()
 
 
 if __name__ == "__main__":

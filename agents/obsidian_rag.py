@@ -22,6 +22,7 @@ from agents.config import (  # noqa: E402
     OLLAMA_CHAT_MODEL,
     OLLAMA_EMBED_MODEL,
 )
+from agents.llm_feedback import print_response_feedback  # noqa: E402
 
 CHROMA_PATH = "./data/chroma"
 COLLECTION_NAME = "obsidian_notes"
@@ -128,10 +129,13 @@ Contexto:
 {context}
 """
 
+    print("Enviando mensaje...", flush=True)
+    print("Recibiendo respuesta...", flush=True)
     response = llm.invoke(prompt)
 
     print("\nRespuesta:\n")
     print(response.content)
+    print_response_feedback(response)
     print("\nFuentes:\n")
     for doc in docs:
         print("-", doc.metadata.get("source"))

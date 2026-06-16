@@ -14,6 +14,7 @@ from langgraph.graph import END, START, StateGraph  # noqa: E402
 from langgraph.graph.message import add_messages  # noqa: E402
 
 from agents.config import OLLAMA_BASE_URL, OLLAMA_CHAT_MODEL  # noqa: E402
+from agents.llm_feedback import print_response_feedback  # noqa: E402
 
 
 class State(TypedDict):
@@ -59,11 +60,15 @@ def chat() -> None:
             break
 
         history.append(HumanMessage(content=user_input))
+        print("Enviando mensaje...", flush=True)
         result = graph.invoke({"messages": history})
+        print("Recibiendo respuesta...\n", flush=True)
         history = result["messages"]
 
         assistant_msg = history[-1]
         print(f"Bot: {assistant_msg.content}\n")
+        print_response_feedback(assistant_msg)
+        print()
 
 
 if __name__ == "__main__":

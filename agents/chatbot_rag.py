@@ -22,6 +22,7 @@ from agents.config import (  # noqa: E402
     OLLAMA_CHAT_MODEL,
     OLLAMA_EMBED_MODEL,
 )
+from agents.llm_feedback import print_response_feedback  # noqa: E402
 
 embeddings = OllamaEmbeddings(
     model=OLLAMA_EMBED_MODEL,
@@ -138,6 +139,8 @@ def chat() -> None:
             print()
             continue
 
+        print("Enviando mensaje...", flush=True)
+        print("Recibiendo respuesta...", flush=True)
         print("Bot: ", end="", flush=True)
 
         final_response = None
@@ -152,6 +155,7 @@ def chat() -> None:
 
         if final_response:
             print(final_response.content)
+            print_response_feedback(final_response)
             print()
         else:
             print("[Sin respuesta]\n")

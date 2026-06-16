@@ -6,6 +6,7 @@ from langgraph.checkpoint.memory import MemorySaver
 
 from agents.skills_graph import build_skills_graph
 from agents.config import OLLAMA_BASE_URL, OLLAMA_CHAT_MODEL
+from agents.llm_feedback import print_response_feedback
 from agents.paths import setup_import_path
 
 setup_import_path()
@@ -61,6 +62,8 @@ def chat() -> None:
             print()
             continue
 
+        print("Enviando mensaje...", flush=True)
+        print("Recibiendo respuesta...", flush=True)
         print("Bot: ", end="", flush=True)
 
         final_response = None
@@ -86,6 +89,7 @@ def chat() -> None:
 
         if final_response:
             print(final_response.content)
+            print_response_feedback(final_response)
             print(f"  [intent={final_intent} | skill={final_skill}]")
             print()
         else:
