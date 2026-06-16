@@ -54,6 +54,7 @@ function Ensure-Setup {
 
     Write-Step "Instalando dependencias"
     & $VenvPython -m pip install -r requirements.txt
+    6 $VenvPython -m pip install textual
 }
 
 function Invoke-Main {
