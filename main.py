@@ -42,6 +42,11 @@ def _run_skills(_: argparse.Namespace) -> None:
     chat()
 
 
+def _run_cve(_: argparse.Namespace) -> None:
+    from agents.cve_reader import chat
+    chat()
+
+
 def _run_all(_: argparse.Namespace) -> None:
     from agents.fetch_and_index import main as fetch_main
     from agents.chatbot_rag import chat
@@ -62,6 +67,7 @@ COMMANDS = {
     "memory": _run_memory,
     "monitor": _run_monitor,
     "skills": _run_skills,
+    "cve": _run_cve,
     "all": _run_all,
     "tui": _run_tui,
 }
@@ -83,6 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("memory", help="Chat con memoria por hilos").set_defaults(func=COMMANDS["memory"])
     subparsers.add_parser("monitor", help="Inspeccionar colecciones ChromaDB").set_defaults(func=COMMANDS["monitor"])
     subparsers.add_parser("skills", help="Chat con skills, routing por intención y trazabilidad").set_defaults(func=COMMANDS["skills"])
+    subparsers.add_parser("cve", help="Agente especializado en análisis de CVEs").set_defaults(func=COMMANDS["cve"])
     subparsers.add_parser("all", help="Flujo completo: fetch + rag").set_defaults(func=COMMANDS["all"])
     subparsers.add_parser("tui", help="Interfaz TUI para lanzar acciones").set_defaults(func=COMMANDS["tui"])
 
